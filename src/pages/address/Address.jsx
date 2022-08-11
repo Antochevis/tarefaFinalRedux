@@ -32,6 +32,10 @@ function Address() {
     setup()
   }, [])
 
+  useEffect(() => {
+    
+  }, [endereco])
+
   if(isLoading) {
     return (
       <h1>Loading</h1>

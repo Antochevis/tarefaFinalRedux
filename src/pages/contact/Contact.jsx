@@ -19,7 +19,7 @@ function Contact() {
 
   async function setup() {
     if (id && idContato) {
-      ContactAction.getContactById(idContato, id, dispatch)
+      await ContactAction.getContactById(idContato, id, dispatch)
     } else {
       dispatch({
         type: 'SET_NOT_IS_UPDATE'
@@ -30,6 +30,10 @@ function Contact() {
   useEffect(() => {
     setup()
   }, [])
+
+  useEffect(() => {
+    
+  }, [contato])
 
   if (isLoading) {
     return (
