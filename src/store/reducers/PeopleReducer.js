@@ -9,8 +9,7 @@ function PeopleReducer(state = INITIAL_STATE, action) {
   if (action.type === 'SET_PESSOA') {
     return {
       ...state,
-      pessoas: action.pessoas,
-      size: action.size
+      pessoas: action.pessoas
     }
   }
   
@@ -22,7 +21,37 @@ function PeopleReducer(state = INITIAL_STATE, action) {
       isUpdate: true
     }
   }
+
+  if (action.type === 'SET_NOT_IS_UPDATE') {
+    return {
+      ...state,
+      isUpdate: false
+    }
+  }
+
+  if (action.type === 'SET_CREATE_PESSOA') {
+    return {
+      ...state,
+      loading: false
+    }
+  }
+
+  if(action.type === 'SET_NAVIGATE_CREATE') {
+    return {
+      ...state,
+      loading: false
+    }
+  }
+
+  if(action.type === 'SET_NAVIGATE_UPDATE') {
+    return {
+      ...state,
+      loading: true
+    }
+  }
+
   return state
+
 }
 
 export default PeopleReducer

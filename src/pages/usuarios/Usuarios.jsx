@@ -1,10 +1,10 @@
-import { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
 import { Field, Form, Formik } from 'formik';
 import * as yup from "yup";
 import { Logo } from "../../components/logo/Logo";
 import { BackgroundRegister, RegisterButtonFormStyle, RegisterContainer, RegisterFormStyle, RegisterButtonVoltar, LogoAndTextRegister, RegisterTitle, Errors, RequiredFields } from './Usuarios.Styled';
 import { useNavigate } from 'react-router-dom';
+import { apiDbc } from '../../services/api';
+import toast from 'react-hot-toast';
 
 const SignupSchema = yup.object().shape({
   login: yup.string()
@@ -18,22 +18,21 @@ const SignupSchema = yup.object().shape({
 })
 
 function Usuarios() {
-  //const navigate = useNavigate();
-  
-  /*
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if(!token) {
-      navigate('/')
-    }
-  }, [])
-  */
- 
-  const { handleSignUp } = useContext(AuthContext);
+
   const navigate = useNavigate();
 
   function BackLogin() {
     navigate('/')
+  }
+
+  async function handleSignUp(values) {
+    try {
+      await apiDbc.post('/auth/create', values)
+      navigate('/')
+      toast.success('Cadastrado com sucesso')
+    } catch (e) {
+      toast.error('Deu erro')
+    }
   }
 
   return (

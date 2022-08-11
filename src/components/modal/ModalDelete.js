@@ -1,13 +1,17 @@
 import Modal from 'react-modal'
+import { useDispatch } from 'react-redux'
 
 
 Modal.setAppElement('#root')
 
-function ModalDelete({idDelete, isOpen, setIsOpen, deleteModal}) {
+function ModalDelete({idDelete, isOpen, setIsOpen, deleteModal, idPessoa}) {
+  
+  const dispatch = useDispatch
 
   async function handleDeleteModal() {
-    console.log(idDelete)
-    await deleteModal(idDelete)
+
+    idPessoa ? await deleteModal(idDelete, idPessoa, dispatch) : await deleteModal(idDelete, dispatch)
+
     setIsOpen(false)
   }
 

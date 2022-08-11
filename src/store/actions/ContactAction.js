@@ -4,9 +4,9 @@ import { toast } from "react-hot-toast"
 export async function getContact(idPessoa, dispatch) {
   try {
     const {data} = await apiDbc.get(`contato/${idPessoa}`)
-    console.log(data)
     const mostrarContato = {
-      type: ''
+      type: 'SET_CONTATO',
+      contact: data
     }
     dispatch(mostrarContato)
   } catch (error) {
@@ -18,10 +18,10 @@ export async function handleContact(navigate, id) {
   navigate(`/contato/${id}`)
 }
 
-export async function handleDeleteContact(idContato) {
+export async function handleDeleteContact(idContato, idPessoa, dispatch) {
   try {
     await apiDbc.delete(`contato/${idContato}`)
-    //setup()
+    getContact(idPessoa, dispatch)
     toast.success('Contato excluído com sucesso')
   } catch (error) {
     toast.error('Deu erro')
@@ -50,4 +50,18 @@ export async function handleUpdateContact(values, idContato, id, navigate) {
   } catch (error) {
     toast.error('Deu erro')
   }
+}
+
+export const getContactById = async (idContato, id, dispatch) => {
+
+  const {data: listContacts} = await apiDbc.get(`/contato/${id}`)
+
+  const contactDatas = listContacts.filter(contact => contact.idContato == idContato)
+
+  const setContact = {
+    type: "SET_UPDATE", 
+    contactUpdate: contactDatas[0]
+  }
+
+  dispatch(setContact)
 }

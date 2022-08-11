@@ -1,19 +1,35 @@
 const INITIAL_STATE = {
-
+  address: [],
+  setLoading: true,
+  isUpdate: false,
+  adressUpdate: null
 }
 
 function AddressReducer(state = INITIAL_STATE, action) {
-  if (action.type === '') {
+  if (action.type === 'SET_ENDERECO') {
     return {
-      ...state
+      ...state,
+      address: action.address,
+      setLoading: false
     }
   }
 
-  if (action.type === '') {
+  if (action.type === 'SET_NOT_IS_UPDATE') {
     return {
-      ...state
+      ...state,
+      isUpdate: false
     }
   }
+
+  if (action.type === 'SET_UPDATE') {
+    return {
+      ...state,
+      isUpdate: true,
+      setLoading: false,
+      adressUpdate: action.adressUpdate
+    }
+  }
+
   return state
 }
 

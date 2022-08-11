@@ -1,62 +1,40 @@
 import { toast } from "react-hot-toast"
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
-import { apiDbc } from '../../services/api';
 import { Formik, Form, Field } from 'formik';
 import { IMaskInput } from "react-imask";
 import { AddContactButton, ContainerContact, RequiredFieldsContact } from "./Contact.Style";
+import { useDispatch, useSelector } from "react-redux";
+import * as ContactAction from "../../store/actions/ContactAction"
 
 
 function Contact() {
   const { id } = useParams();
   const { idContato } = useParams();
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [contato, setContato] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const contato = useSelector(state => state.ContactReducer.contactUpdate);
+  const isUpdate = useSelector(state => state.ContactReducer.isUpdate)
+  const [isLoading, setIsLoading] = useState(true);
 
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/')
-    }
-  }, [])
-
-  const setup = async () => {
+  async function setup() {
     if (id && idContato) {
-      setIsUpdate(true)
-      try {
-        const { data:listaContato } = await apiDbc.get(`/contato/${id}`)
-        const infosContato = listaContato.filter(contato => contato.idContato == idContato)
-        setContato(infosContato[0])
-      } catch (error) {
-        console.log(error)
-      }
+      ContactAction.getContactById(idContato, id, dispatch)
+    } else {
+      dispatch({
+        type: 'SET_NOT_IS_UPDATE'
+      })
     }
+    setIsLoading(false)
   }
-
   useEffect(() => {
     setup()
   }, [])
 
-  async function handleCreateContact(values) {
-    try {
-      await apiDbc.post(`/contato/${id}`, values);
-      navigate(`/detalhe-pessoa/${id}`)
-      toast.success('Contato cadastrado com sucesso')
-    } catch (error) {
-      toast.error('Deu erro')
-    }
-  }
-
-  async function handleUpdateContact(values) {
-    try {
-      await apiDbc.put(`/contato/${idContato}`, values)
-      navigate(`/detalhe-pessoa/${id}`)
-      toast.success('Contato atualizado com sucesso')
-    } catch (error) {
-      toast.error('Deu erro')
-    }
+  if (isLoading) {
+    return (
+      <h1>Loading</h1>
+    )
   }
 
   async function onBlurTelefone(ev, setFieldValue) {
@@ -67,19 +45,18 @@ function Contact() {
     }
   }
 
-  if((isUpdate && contato) || !isUpdate) {
-    return (
+  return (
     <ContainerContact>
       <Formik
         initialValues={{
           idPessoa: id,
-          tipoContato: isUpdate ? contato.tipoContato : '',
-          telefone: isUpdate ? contato.telefone : '',
-          descricao: isUpdate ? contato.descricao : '',
+          tipoContato: isUpdate && contato ? contato.tipoContato : '',
+          telefone: isUpdate && contato ? contato.telefone : '',
+          descricao: isUpdate && contato ? contato.descricao : '',
         }}
         onSubmit={(values, actions) => {
           console.log(values)
-          !isUpdate ? handleCreateContact(values) : handleUpdateContact(values)
+          !isUpdate ? ContactAction.handleCreateContact(values, id, navigate) : ContactAction.handleUpdateContact(values, idContato, id, navigate)
         }}
       >
         {({ setFieldValue }) => (
@@ -98,7 +75,7 @@ function Contact() {
                 name="telefone"
                 render={({ field }) => (
                   <IMaskInput
-                  {...field}
+                    {...field}
                     placeholder="Digite seu telefone"
                     required
                     id="telefone"
@@ -110,16 +87,16 @@ function Contact() {
             </div>
             <div>
               <label htmlFor="descricao">*Descrição</label>
-              <Field placeholder="Digite a descrição do contato" name='descricao' required/>
+              <Field placeholder="Digite a descrição do contato" name='descricao' required />
             </div>
             <RequiredFieldsContact>*Campos Obrigatórios</RequiredFieldsContact>
-            <AddContactButton type='submit'>{isUpdate ? 'Atualizar endereço' : 'Cadastrar endereço'}</AddContactButton>
+            <AddContactButton type='submit'>{isUpdate ? 'Atualizar contato' : 'Cadastrar contato'}</AddContactButton>
           </Form>
         )}
       </Formik>
     </ContainerContact>
-    )
-  }
+  )
+
 }
 
 export default Contact

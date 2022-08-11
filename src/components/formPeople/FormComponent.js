@@ -7,21 +7,29 @@ import MaskedInput from 'react-text-mask';
 import { AddPersonButton, CancelAddPersonButton, ContainerAddForm, RequiredInfosPerson } from "./FormComponent.Styled";
 import { useNavigate } from "react-router-dom"
 import * as PeopleAction from "../../store/actions/PeopleAction"
+import { useDispatch } from "react-redux";
 
 
-function FormComponent({isUpdate, people, id}) {
+function FormComponent({isUpdate, people, id, isLoading}) {
   //const {handleCreate, handleUpdate} = useContext(PeopleContext);
   const user = people && people[0];
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-
-
+  /*
   if (!user && isUpdate) {
+    console.log('entrei no if')
     return 
-  }
+  }*/
 
   async function HandleCancel() {
     navigate('/pessoa')
+  }
+
+  if(isLoading){
+    return (
+      <div><h1>Loading</h1></div>
+    )
   }
 
   return (
@@ -39,12 +47,12 @@ function FormComponent({isUpdate, people, id}) {
         dataNascimento: FormatDateBrToUsa(values.dataNascimento),
         email: values.email
       }
-      !isUpdate ? PeopleAction.handleCreate(newValues, navigate) : PeopleAction.handleUpdate(newValues, id, navigate)
+      !isUpdate ? PeopleAction.handleCreate(newValues, navigate, dispatch) : PeopleAction.handleUpdate(newValues, id, navigate)
     }}
   >
     {props => (
       <ContainerAddForm onSubmit={props.handleSubmit}>
-        <h1>Cadastrar nova Pessoa</h1>
+        <h1>{isUpdate ? 'Atualizar pessoa' : 'Cadastrar nova pessoa'}</h1>
         <div>
           <label htmlFor="nome">*Nome</label>
           <input

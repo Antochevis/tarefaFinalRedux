@@ -14,7 +14,11 @@ export async function getPessoas(dispatch) {
   }
 }
 
-export function navigateUpdate(idPessoa, navigate) {
+export function navigateUpdate(idPessoa, navigate, dispatch) {
+  const goAtualizar = {
+    type: 'SET_NAVIGATE_UPDATE'
+  }
+  dispatch(goAtualizar)
   navigate(`/editar-pessoa/${idPessoa}`)
 }
 
@@ -35,9 +39,13 @@ export async function getPessoaById(id, dispatch) {
   }
 }
 
-export  async function handleCreate(values, navigate) {
+export  async function handleCreate(values, navigate, dispatch) {
   try {
     await apiDbc.post(`/pessoa`, values);
+    const novaPessoa = {
+      type: 'SET_CREATE_PESSOA'
+    }
+    dispatch(novaPessoa)
     navigate('/pessoa');
     toast.success('Pessoa cadastrada')
   } catch (error) {
@@ -63,4 +71,12 @@ export async function handleUpdate(values, id, navigate) {
   } catch (error) {
     toast.error('Deu erro')
   }
+}
+
+export function handleAdd(navigate, dispatch) {
+  const goCadastrar = {
+    type: 'SET_NAVIGATE_CREATE'
+  }
+  dispatch(goCadastrar)
+  navigate('/criar-pessoa')
 }

@@ -1,60 +1,43 @@
 import { toast } from "react-hot-toast"
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'
-import { apiCep, apiDbc } from '../../services/api';
+import { apiCep } from '../../services/api';
 import { Formik, Form, Field } from 'formik';
 import { IMaskInput } from "react-imask";
 import { AddAddressButton, ContainerCpf, RequiredFieldsAddress } from './Address.Style';
+import { useDispatch, useSelector } from "react-redux";
+import * as AddressAction from "../../store/actions/AddressAction"
 
 function Address() {
   const { id } = useParams();
   const { idEndereco } = useParams();
-  const [isUpdate, setIsUpdate] = useState(false);
-  const [endereco, setEndereco] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const endereco = useSelector(state => state.AddressReducer.adressUpdate)
+  const isUpdate = useSelector(state => state.AddressReducer.isUpdate)
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/')
+  async function setup() {
+    if(id && idEndereco) {
+      await AddressAction.getAddressById(idEndereco, dispatch)
+    } else {
+      dispatch({
+        type: 'SET_NOT_IS_UPDATE'
+      })
     }
-  }, [])
-
-  const setup = async () => {
-    if (id && idEndereco) {
-      setIsUpdate(true)
-      try {
-        const { data } = await apiDbc.get(`/endereco/${idEndereco}`)
-        setEndereco(data)
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    setIsLoading(false)
   }
 
   useEffect(() => {
     setup()
   }, [])
 
-  async function handleCreateAddress(values) {
-    try {
-      await apiDbc.post(`/endereco/{idPessoa}?idPessoa=${id}`, values);
-      navigate(`/detalhe-pessoa/${id}`)
-      toast.success('Endereço cadastrado com sucesso')
-    } catch (error) {
-      toast.error('Deu erro')
-    }
+  if(isLoading) {
+    return (
+      <h1>Loading</h1>
+    )
   }
 
-  async function handleUpdateAddress(values) {
-    try {
-      await apiDbc.put(`/endereco/${idEndereco}`, values)
-      navigate(`/detalhe-pessoa/${id}`)
-      toast.success('Endereço atualizado com sucesso')
-    } catch (error) {
-      toast.error('Deu erro')
-    }
-  }
 
   async function onBlurCep(ev, setFieldValue) {
     const { value } = ev.target
@@ -76,25 +59,24 @@ function Address() {
     }
   }
 
-  if((isUpdate && endereco) || !isUpdate) {
   return (
     <ContainerCpf>
       <Formik
         initialValues={{
           idPessoa: id,
-          cep: isUpdate ? endereco.cep : '',
-          tipo: isUpdate ? endereco.tipo : '',
-          logradouro: isUpdate ? endereco.logradouro : '',
-          numero: isUpdate ? endereco.numero : '',
-          cidade: isUpdate ? endereco.cidade : '',
-          estado: isUpdate ? endereco.estado : '',
-          pais: isUpdate ? endereco.pais : '',
-          complemento: isUpdate ? endereco.complemento : ''
+          cep: isUpdate && endereco  ? endereco.cep : '',
+          tipo: isUpdate && endereco ? endereco.tipo : '',
+          logradouro: isUpdate && endereco ? endereco.logradouro : '',
+          numero: isUpdate && endereco ? endereco.numero : '',
+          cidade: isUpdate && endereco ? endereco.cidade : '',
+          estado: isUpdate && endereco ? endereco.estado : '',
+          pais: isUpdate && endereco ? endereco.pais : '',
+          complemento: isUpdate && endereco ? endereco.complemento : ''
         }}
         onSubmit={(values, actions) => {
           console.log(values)
           values.cep = values.cep.replace('-', '')
-          !isUpdate ? handleCreateAddress(values) : handleUpdateAddress(values)
+          !isUpdate ? AddressAction.handleCreateAddress(values, navigate, id) : AddressAction.handleUpdateAddress(values, navigate, idEndereco, id)
         }}
       >
         {({ setFieldValue }) => (
@@ -154,7 +136,7 @@ function Address() {
       </Formik>
     </ContainerCpf>
   )
-  }
+  
 }
 
 export default Address

@@ -29,21 +29,14 @@ export function isAuth(dispatch) {
       isLogged: true
     }
     dispatch(logado)
-  } 
-  dispatch({
-    type: 'SET_LOADING'
-  })
-}
-
-export async function handleSignUp(values, navigate) {
-  try {
-    await apiDbc.post('/auth/create', values)
-    navigate('/')
-    toast.success('Cadastrado com sucesso')
-  } catch (e) {
-    toast.error('Deu erro')
+  } else {
+    dispatch({
+      type: 'SET_LOADING'
+    })
   }
 }
+
+
 
 export const handleLogout = (navigate, dispatch) => {
   const deslogado = {

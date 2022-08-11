@@ -24,10 +24,6 @@ function People() {
     setup()
   }, [])
 
-  function handleAdd() {
-    navigate('/criar-pessoa')
-  }
-
   return (
     <Container>
       <AsidePeople>
@@ -64,7 +60,7 @@ function People() {
         <ContainerPeople> 
           <HeaderPeople>
             <div>
-              <ButtonAdd onClick={handleAdd}>Add Person</ButtonAdd>
+              <ButtonAdd onClick={() => PeopleAction.handleAdd(navigate, dispatch)}>Add Person</ButtonAdd>
             </div>
             <div>
               <div>

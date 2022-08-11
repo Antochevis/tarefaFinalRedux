@@ -11,7 +11,8 @@ function PeopleForm() {
 
   const {id} = useParams();
   const pessoa = useSelector(state => state.PeopleReducer.pessoa)
-
+  const isUpdate = useSelector(state => state.PeopleReducer.isUpdate)
+  const loading = useSelector(state => state.PeopleReducer.loading)
   const dispatch = useDispatch()
 
 
@@ -19,16 +20,20 @@ function PeopleForm() {
     if (id) {
       //PeopleAction.setIsUpdate(true);
       PeopleAction.getPessoaById(id, dispatch)
+    } else {
+      dispatch({
+        type: 'SET_NOT_IS_UPDATE'
+      })
     }
   }
 
   useEffect(() => {
     setup();
-  }, []);
+  }, []); 
 
 return (
     <FormContainer>
-      <FormComponent  people={pessoa} id={id} />
+      <FormComponent isUpdate={isUpdate} people={pessoa} id={id} isLoading={loading}/>
     </FormContainer>
 )
 }

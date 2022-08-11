@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+/*import { createContext, useState } from "react";
 import { apiDbc } from "../services/api";
 import { toast } from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
@@ -79,4 +79,4 @@ function PeopleProvider({children}) {
   )
 }
 
-export {PeopleContext, PeopleProvider}
+export {PeopleContext, PeopleProvider}*/

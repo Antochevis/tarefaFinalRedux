@@ -6,30 +6,18 @@ import * as PeopleAction from "../../store/actions/PeopleAction"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom";
 
-function FlatList({ list }) {
+function FlatList() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const pessoas = useSelector(state => state.PeopleReducer.pessoas)
   //const [isOpenModal, setIsOpenModal] = useState(false)
 
-  async function setup () {
+  async function setup() {
     PeopleAction.getPessoas(dispatch)
   }
   useEffect(() => {
     setup()
   }, [])
-
-  /*
-
-  async function handleUpdate(idPessoa) {
-    navigate(`/editar-pessoa/${idPessoa}`)
-  }
-
-  async function handleDetail(idPessoa) {
-    navigate(`/detalhe-pessoa/${idPessoa}`)
-  }
-
-  */
 
   /*
   function handleOpenModal() {
@@ -49,7 +37,7 @@ function FlatList({ list }) {
           <p>{item.email}</p>
           <div>
             <ButtonDetails onClick={() => PeopleAction.handleDetail(item.idPessoa, navigate)}>Details</ButtonDetails>
-            <ButtonUpdate onClick={() => PeopleAction.navigateUpdate(item.idPessoa, navigate)}>Update</ButtonUpdate>
+            <ButtonUpdate onClick={() => PeopleAction.navigateUpdate(item.idPessoa, navigate, dispatch)}>Update</ButtonUpdate>
             <ButtonRemove onClick={() => PeopleAction.handleDelete(item.idPessoa, dispatch)}>Remove</ButtonRemove>
           </div>
         </ContainerFlatList>
